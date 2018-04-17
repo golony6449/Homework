@@ -2,12 +2,11 @@
 using namespace cv;
 
 void first();
-void second();
-void third();
+//void second();
+//void third();
+//void temp();
 
 
 int main() {
 	first();
-	//second();
-	//third();
 }

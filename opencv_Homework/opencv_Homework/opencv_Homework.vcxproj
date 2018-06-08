@@ -126,13 +126,22 @@
     <ClCompile Include="0409_second.cpp" />
     <ClCompile Include="0409_third.cpp" />
     <ClCompile Include="0416_first.cpp" />
+    <ClCompile Include="0430_fourth.cpp" />
+    <ClCompile Include="0430_third.cpp" />
+    <ClCompile Include="0514_FFT.cpp" />
+    <ClCompile Include="0521_1st.cpp" />
+    <ClCompile Include="0521_2nd0.cpp" />
+    <ClCompile Include="0521_DCT_opencv.cpp" />
+    <ClCompile Include="0521_Hough_OpenCV.cpp" />
     <ClCompile Include="chap3_17.cpp" />
     <ClCompile Include="chap3_19.cpp" />
     <ClCompile Include="chap4_11.cpp" />
     <ClCompile Include="chap4_13.cpp" />
     <ClCompile Include="chap4_9.cpp" />
+    <ClCompile Include="filter.cpp" />
     <ClCompile Include="hello.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="0430_MorpBinary.cpp" />
     <ClCompile Include="temp.cpp" />
   </ItemGroup>
   <ItemGroup>

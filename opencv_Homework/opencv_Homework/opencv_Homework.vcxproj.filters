@@ -67,6 +67,33 @@
       <Filter>소스 파일\이전과제</Filter>
     </ClCompile>
     <ClCompile Include="0416_first.cpp">
+      <Filter>소스 파일\이전과제</Filter>
+    </ClCompile>
+    <ClCompile Include="0430_third.cpp">
+      <Filter>소스 파일\이전과제</Filter>
+    </ClCompile>
+    <ClCompile Include="0430_fourth.cpp">
+      <Filter>소스 파일\이전과제</Filter>
+    </ClCompile>
+    <ClCompile Include="0430_MorpBinary.cpp">
+      <Filter>소스 파일\이전과제</Filter>
+    </ClCompile>
+    <ClCompile Include="0514_FFT.cpp">
+      <Filter>소스 파일\이전과제</Filter>
+    </ClCompile>
+    <ClCompile Include="0521_1st.cpp">
+      <Filter>소스 파일\이전과제</Filter>
+    </ClCompile>
+    <ClCompile Include="0521_2nd0.cpp">
+      <Filter>소스 파일\이전과제</Filter>
+    </ClCompile>
+    <ClCompile Include="0521_DCT_opencv.cpp">
+      <Filter>소스 파일\이전과제</Filter>
+    </ClCompile>
+    <ClCompile Include="filter.cpp">
+      <Filter>소스 파일\이전과제</Filter>
+    </ClCompile>
+    <ClCompile Include="0521_Hough_OpenCV.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

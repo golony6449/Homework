@@ -1,12 +1,10 @@
 #include <opencv2/opencv.hpp>
 using namespace cv;
 
-void first();
-//void second();
-//void third();
-//void temp();
-
+void first(Mat img);
+void main_Hough_OpenCV();
 
 int main() {
-	first();
+	Mat src = imread("img.jpg", IMREAD_GRAYSCALE);
+	main_Hough_OpenCV();
 }

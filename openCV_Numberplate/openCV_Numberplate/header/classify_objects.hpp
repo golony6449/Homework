@@ -1,4 +1,6 @@
-﻿void preprocessing_plate(Mat plate_img , Mat& ret_img)
+﻿#pragma once
+
+void preprocessing_plate(Mat plate_img , Mat& ret_img)
 {
 	resize(plate_img, plate_img, Size(180, 35));
 	threshold(plate_img, plate_img, 32, 255, THRESH_BINARY | THRESH_OTSU);

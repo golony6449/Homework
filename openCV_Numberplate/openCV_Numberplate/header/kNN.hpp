@@ -1,3 +1,5 @@
+#pragma once
+
 void find_histoPos(Mat img, int & start, int &end, int direct)
 {
 	reduce(img, img, direct, REDUCE_AVG);

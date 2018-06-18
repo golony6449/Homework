@@ -1,19 +1,36 @@
+#pragma once
+
 #include <opencv2/opencv.hpp>
+#include <iostream>
 using namespace cv;
 using namespace std;
 
-Mat  preprocessing(Mat image)
+Mat  preprocessing(Mat image, bool blurFlag = 1)
 {
 	Mat gray, th_img, morph;
 	Mat kernel(5, 25, CV_8UC1, Scalar(1));		// 닫힘 연산 마스크
 	cvtColor(image, gray, CV_BGR2GRAY);		// 명암도 영상 변환
 
-	blur(gray, gray, Size(5, 5));				// 블러링
+	if (blurFlag == 1)
+		blur(gray, gray, Size(5, 5));				// 블러링
+	else if (blurFlag == 0) {
+		float sharpen[] = {
+			-1, -1, -1,
+			-1, 9, -1,
+			-1, -1, -1,
+		};
+		cout << "샤프닝 필터를 적용합니다." << endl;
+
+		Mat mask(3, 3, CV_32F, sharpen);
+
+		filter2D(gray, gray, -1, mask);
+	}
+
 	Sobel(gray, gray, CV_8U, 1, 0, 3);			// 소벨 에지 검출
 
 	threshold(gray, th_img, 120, 255, THRESH_BINARY);	// 이진화 수행
-	morphologyEx(th_img, morph, MORPH_CLOSE, kernel);													//	morphologyEx(th_img, morph, MORPH_CLOSE, kernel);	// 열림 연산 수행	
-	//	imshow("th_img", th_img), imshow("morph", morph);
+	morphologyEx(th_img, morph, MORPH_CLOSE, kernel);														morphologyEx(th_img, morph, MORPH_CLOSE, kernel);	// 열림 연산 수행	
+		//imshow("th_img", th_img), imshow("morph", morph);
 	return morph;
 }
 

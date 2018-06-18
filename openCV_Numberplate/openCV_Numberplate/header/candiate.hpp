@@ -1,3 +1,5 @@
+#pragma once
+
 void  refine_candidate(Mat image, RotatedRect& candi)
 {
 	Mat fill(image.size() + Size(2, 2), CV_8UC1, Scalar(0));   	// 채움 영역

@@ -73,26 +73,47 @@
    </property>
   </action>
   <action name="actionRed">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Red</string>
    </property>
   </action>
   <action name="actionBlue">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Blue</string>
    </property>
   </action>
   <action name="actionYellow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Yellow</string>
    </property>
   </action>
   <action name="actionGreen">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Green</string>
    </property>
   </action>
   <action name="actionPurple">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Purple</string>
    </property>

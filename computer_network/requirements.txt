@@ -1,0 +1,5 @@
+pypiwin32==223
+PyQt5==5.11.3
+PyQt5-sip==4.19.15
+Twisted==18.9.0
+

@@ -1,6 +1,9 @@
 from ui.main_window import Ui_MainWindow
 from PyQt5.QtWidgets import QMainWindow
 
+from ui_logic.login_window_logic import LoginWindow
+from ui_logic.file_select_window_logic import FileSelectWindow
+from ui_logic.char_input_window_logic import CharInputWindow
 from module.const_value import *
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -51,9 +54,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             #     print(action, "is Checked")
             #     action.setChecked(True)
 
+    def createNewWindow(self):
+        if self.mode == PICTURE_SELECTED:
+            new_window = FileSelectWindow()
+        elif self.mode == CHAR_SELECTED:
+            new_window = CharInputWindow()
+        else:
+            return
+
+        if new_window.exec_():
+            pass
 
     def mousePressEvent(self, event):
-        pass
+        self.createNewWindow()
 
     def mouseReleaseEvent(self, event):
         pass
@@ -61,3 +74,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def mouseMoveEvent(self, event):
         # print('x: ', event.x(), 'y: ', event.y())
         pass
+
+    def login(self):
+        # https://www.reddit.com/r/learnpython/comments/7w9pt9/pyqt5_passing_variable_from_one_window_to_another/
+        login = LoginWindow()
+
+        if login.exec_():
+            return False
+        return True

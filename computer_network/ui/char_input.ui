@@ -11,10 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>파일 선택</string>
-  </property>
-  <property name="windowOpacity">
-   <double>1.000000000000000</double>
+   <string>문자 입력</string>
   </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
@@ -45,19 +42,12 @@
     <item>
      <widget class="QLabel" name="label">
       <property name="text">
-       <string>파일경로</string>
+       <string>입력할 텍스트</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QTextEdit" name="filePath"/>
-    </item>
-    <item>
-     <widget class="QToolButton" name="explorerPopup">
-      <property name="text">
-       <string>...</string>
-      </property>
-     </widget>
+     <widget class="QTextEdit" name="inputText"/>
     </item>
    </layout>
   </widget>

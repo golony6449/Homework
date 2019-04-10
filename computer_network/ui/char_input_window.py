@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'file_select.ui'
+# Form implementation generated from reading ui file 'char_input.ui'
 #
 # Created by: PyQt5 UI code generator 5.11.3
 #
@@ -12,7 +12,6 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(400, 130)
-        Dialog.setWindowOpacity(1.0)
         self.buttonBox = QtWidgets.QDialogButtonBox(Dialog)
         self.buttonBox.setGeometry(QtCore.QRect(230, 90, 161, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
@@ -27,12 +26,9 @@ class Ui_Dialog(object):
         self.label = QtWidgets.QLabel(self.horizontalLayoutWidget)
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
-        self.filePath = QtWidgets.QTextEdit(self.horizontalLayoutWidget)
-        self.filePath.setObjectName("filePath")
-        self.horizontalLayout.addWidget(self.filePath)
-        self.explorerPopup = QtWidgets.QToolButton(self.horizontalLayoutWidget)
-        self.explorerPopup.setObjectName("explorerPopup")
-        self.horizontalLayout.addWidget(self.explorerPopup)
+        self.inputText = QtWidgets.QTextEdit(self.horizontalLayoutWidget)
+        self.inputText.setObjectName("inputText")
+        self.horizontalLayout.addWidget(self.inputText)
 
         self.retranslateUi(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)
@@ -41,7 +37,6 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "파일 선택"))
-        self.label.setText(_translate("Dialog", "파일경로"))
-        self.explorerPopup.setText(_translate("Dialog", "..."))
+        Dialog.setWindowTitle(_translate("Dialog", "문자 입력"))
+        self.label.setText(_translate("Dialog", "입력할 텍스트"))
 

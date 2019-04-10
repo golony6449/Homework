@@ -37,7 +37,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print('Event: ', event, " value: ", self.actionCharactor.isChecked())
 
         # 이벤트 유형 구분
-        if CHAR_SELECTED < event < DRAW_SELECTED:
+        if CHAR_SELECTED <= event <= DRAW_SELECTED:
             self.mode = event
         else:
             self.color = event
@@ -45,6 +45,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for i, action in enumerate(self.action_list):
             if i != self.mode and i != self.color:
                 action.setChecked(False)
+            else:
+                action.setChecked(True)
             # else:
             #     print(action, "is Checked")
             #     action.setChecked(True)

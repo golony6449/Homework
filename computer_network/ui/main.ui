@@ -25,15 +25,18 @@
    </property>
    <widget class="QMenu" name="menutype">
     <property name="title">
-     <string>type</string>
+     <string>그리기</string>
     </property>
     <addaction name="actionCharactor"/>
     <addaction name="actionPicture"/>
-    <addaction name="actionDraw"/>
+    <addaction name="separator"/>
+    <addaction name="actionDrawLine"/>
+    <addaction name="actionDrawElipse"/>
+    <addaction name="actionDrawRect"/>
    </widget>
    <widget class="QMenu" name="menucolor">
     <property name="title">
-     <string>color</string>
+     <string>색상</string>
     </property>
     <addaction name="actionRed"/>
     <addaction name="actionBlue"/>
@@ -50,7 +53,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Charactor</string>
+    <string>문자 입력</string>
    </property>
   </action>
   <action name="actionPicture">
@@ -58,18 +61,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Picture</string>
-   </property>
-  </action>
-  <action name="actionDraw">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Draw</string>
+    <string>사진 삽입</string>
    </property>
   </action>
   <action name="actionRed">
@@ -77,7 +69,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Red</string>
+    <string>빨강</string>
    </property>
   </action>
   <action name="actionBlue">
@@ -88,7 +80,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Blue</string>
+    <string>파랑</string>
    </property>
   </action>
   <action name="actionYellow">
@@ -99,7 +91,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Yellow</string>
+    <string>노랑</string>
    </property>
   </action>
   <action name="actionGreen">
@@ -107,7 +99,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Green</string>
+    <string>초록</string>
    </property>
   </action>
   <action name="actionPurple">
@@ -115,7 +107,61 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Purple</string>
+    <string>보라</string>
+   </property>
+  </action>
+  <action name="actionLineDraw">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>직선</string>
+   </property>
+  </action>
+  <action name="actionElipseDraw">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>타원</string>
+   </property>
+  </action>
+  <action name="actionRectDraw">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>사각형</string>
+   </property>
+  </action>
+  <action name="actionDrawLine">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>직선 그리기</string>
+   </property>
+  </action>
+  <action name="actionDrawElipse">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>원 그리기</string>
+   </property>
+  </action>
+  <action name="actionDrawRect">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>사각형 그리기</string>
    </property>
   </action>
  </widget>

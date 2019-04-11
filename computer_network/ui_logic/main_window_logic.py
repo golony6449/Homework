@@ -1,5 +1,8 @@
 from ui.main_window import Ui_MainWindow
 from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtGui import QPainter, QColor, QFont
+from PyQt5.QtCore import Qt
+from time import sleep
 
 from ui_logic.login_window_logic import LoginWindow
 from ui_logic.file_select_window_logic import FileSelectWindow
@@ -15,13 +18,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.centralwidget.setMouseTracking(True)
 
         # 이벤트 관리용 리스트 작성
-        self.action_list = [self.actionCharactor, self.actionPicture, self.actionDraw,
+        self.action_list = [self.actionCharactor, self.actionPicture,
+                            self.actionLineDraw, self.actionElipseDraw, self.actionRectDraw,
                             self.actionRed, self.actionBlue, self.actionYellow, self.actionGreen,
                             self.actionPurple]
-        self.mode = DRAW_SELECTED
+        self.mode = DRAW_LINE
         self.color = BLUE_SELECTED
 
         self.event_init()
+
+        self.from_x = self.from_y = self.to_x = self.to_y = None
+        self.object_list = []
 
     def event_init(self):
         # for i, action in enumerate(self.action_list):
@@ -29,7 +36,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.actionCharactor.triggered.connect(lambda : self.triggerEvent(CHAR_SELECTED))
         self.actionPicture.triggered.connect(lambda : self.triggerEvent(PICTURE_SELECTED))
-        self.actionDraw.triggered.connect(lambda : self.triggerEvent(DRAW_SELECTED))
+        self.actionDrawLine.triggered.connect(lambda : self.triggerEvent(DRAW_LINE))
+        self.actionDrawElipse.triggered.connect(lambda : self.triggerEvent(DRAW_ELIPSE))
+        self.actionDrawRect.triggered.connect(lambda : self.triggerEvent(DRAW_RECT))
         self.actionRed.triggered.connect(lambda : self.triggerEvent(RED_SELECTED))
         self.actionBlue.triggered.connect(lambda : self.triggerEvent(BLUE_SELECTED))
         self.actionYellow.triggered.connect(lambda : self.triggerEvent(YELLOW_SELECTED))
@@ -37,24 +46,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionPurple.triggered.connect(lambda : self.triggerEvent(PURPLE_SELECTED))
 
     def triggerEvent(self, event):
-        print('Event: ', event, " value: ", self.actionCharactor.isChecked())
-
+        # TODO: 이벤트 구분은 정상, But UI 상에 Check가 이상하게 찍힘, Status도 이상한 것을 보아 구현 자체를 엎어야 할듯
         # 이벤트 유형 구분
-        if CHAR_SELECTED <= event <= DRAW_SELECTED:
+        if CHAR_SELECTED <= event <= DRAW_RECT:
             self.mode = event
         else:
             self.color = event
-
+        # print('mode: ', self.mode, 'color: ', self.color)
         for i, action in enumerate(self.action_list):
+            # print(i, "는 ", action.isChecked(), end=" | ")
             if i != self.mode and i != self.color:
                 action.setChecked(False)
             else:
                 action.setChecked(True)
-            # else:
-            #     print(action, "is Checked")
-            #     action.setChecked(True)
+        print()
 
-    def createNewWindow(self):
+    def createNewWindow(self, x, y):
         if self.mode == PICTURE_SELECTED:
             new_window = FileSelectWindow()
         elif self.mode == CHAR_SELECTED:
@@ -63,17 +70,59 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return
 
         if new_window.exec_():
-            pass
+            if self.mode == PICTURE_SELECTED:
+                self.user_input = new_window.filePath.toPlainText()
+            elif self.mode == CHAR_SELECTED:
+                self.user_input = new_window.inputText.toPlainText()
 
     def mousePressEvent(self, event):
-        self.createNewWindow()
+        self.from_x = event.x()
+        self.from_y = event.y()
+
+        self.createNewWindow(self.from_x, self.from_y)  # 필요시 새 윈도우 생성
+
+        if self.color == RED_SELECTED: color = RED
+        elif self.color == BLUE_SELECTED: color = BLUE
+        elif self.color == YELLOW_SELECTED: color = YELLOW
+        elif self.color == GREEN_SELECTED: color = GREEN
+        elif self.color == PURPLE_SELECTED: color = PURPLE
+        else: color = (0, 0, 0)
+
+        # (모드, 위치, 텍스트, 색상)
+        self.object_list.append((self.mode, event.pos(), self.user_input, color))
+        self.user_input = None
+
 
     def mouseReleaseEvent(self, event):
-        pass
+        self.to_x = event.x
+        self.to_y = event.y
 
-    def mouseMoveEvent(self, event):
-        # print('x: ', event.x(), 'y: ', event.y())
-        pass
+        # TODO 처리
+        # if self.mode == DRAW_LINE:
+        #     self.object_list.append()
+        # elif self.mode == DRAW_ELIPSE:
+        #     self.object_list.append()
+        # elif self.mode == DRAW_RECT:
+        #     self.object_list.append()
+
+        self.from_x = self.from_y = self.to_x = self.to_y = None
+
+    # def mouseMoveEvent(self, event):
+    #     # print('x: ', event.x(), 'y: ', event.y())
+    #     pass
+
+    def paintEvent(self, event):
+        # print("윈도우 다시 그리기! 수행")
+        painter = QPainter()
+        painter.begin(self)
+        for obj in self.object_list:
+            if obj[0] == CHAR_SELECTED:
+                painter.setPen(QColor(obj[3][0], obj[3][1], obj[3][2]))
+                painter.setFont(QFont('Decorative', 15))
+                painter.drawText(obj[1], obj[2])
+        painter.end()
+
+
 
     def login(self):
         # https://www.reddit.com/r/learnpython/comments/7w9pt9/pyqt5_passing_variable_from_one_window_to_another/

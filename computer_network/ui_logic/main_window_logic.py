@@ -1,6 +1,6 @@
 from ui.main_window import Ui_MainWindow
 from PyQt5.QtWidgets import QMainWindow
-from PyQt5.QtGui import QPainter, QColor, QFont
+from PyQt5.QtGui import QPainter, QColor, QFont, QPen
 from PyQt5.QtCore import Qt
 from time import sleep
 
@@ -111,8 +111,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.to_pos = event.pos()
 
         # TODO 처리
-        # if self.mode == DRAW_LINE:
-        #     self.object_list.append()
+        if self.mode == DRAW_LINE:
+            # (유형, 시점, 종점, 색상)
+            self.object_list.append((self.mode, self.from_pos, event.pos(), self.extractRGB()))
+            print("라인 추가", self.mode, self.from_pos, event.pos(), self.extractRGB())
+
         # elif self.mode == DRAW_ELIPSE:
         #     self.object_list.append()
         # elif self.mode == DRAW_RECT:
@@ -123,16 +126,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # def mouseMoveEvent(self, event):
     #     # print('x: ', event.x(), 'y: ', event.y())
     #     pass
+        self.update()
 
     def paintEvent(self, event):
         # print("윈도우 다시 그리기! 수행")
         painter = QPainter()
+        pen = QPen(Qt.SolidLine)
+        pen.setWidth(2)
+
+        # TODO: 각각의 객체(QLine, QPoint 등)을 이용하도록 리팩토링
         painter.begin(self)
         for obj in self.object_list:
             if obj[0] == CHAR_SELECTED:
                 painter.setPen(QColor(obj[3][0], obj[3][1], obj[3][2]))
                 painter.setFont(QFont('Decorative', 15))
                 painter.drawText(obj[1], obj[2])
+            if obj[0] == DRAW_LINE:
+                pen.setColor(QColor(obj[3][0], obj[3][1], obj[3][2]))
+                painter.setPen(pen)
+                painter.drawLine(obj[1], obj[2])
+
         painter.end()
 
 

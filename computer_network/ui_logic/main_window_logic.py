@@ -1,7 +1,7 @@
 from ui.main_window import Ui_MainWindow
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtGui import QPainter, QColor, QFont, QPen
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QRect
 from time import sleep
 
 from ui_logic.login_window_logic import LoginWindow
@@ -116,16 +116,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.object_list.append((self.mode, self.from_pos, event.pos(), self.extractRGB()))
             print("라인 추가", self.mode, self.from_pos, event.pos(), self.extractRGB())
 
-        # elif self.mode == DRAW_ELIPSE:
-        #     self.object_list.append()
+        elif self.mode == DRAW_ELIPSE:
+            # (유형, 시점, 종점, 색상)
+            self.object_list.append((self.mode, self.from_pos, event.pos(), self.extractRGB()))
+
         # elif self.mode == DRAW_RECT:
         #     self.object_list.append()
 
         self.from_x = self.from_y = self.to_x = self.to_y = None
-
-    # def mouseMoveEvent(self, event):
-    #     # print('x: ', event.x(), 'y: ', event.y())
-    #     pass
         self.update()
 
     def paintEvent(self, event):
@@ -145,6 +143,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 pen.setColor(QColor(obj[3][0], obj[3][1], obj[3][2]))
                 painter.setPen(pen)
                 painter.drawLine(obj[1], obj[2])
+            if obj[0] == DRAW_ELIPSE:
+                pen.setColor(QColor(obj[3][0], obj[3][1], obj[3][2]))
+                painter.setPen(pen)
+                painter.drawEllipse(QRect(obj[1], obj[2]))
 
         painter.end()
 

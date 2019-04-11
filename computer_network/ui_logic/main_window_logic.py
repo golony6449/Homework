@@ -27,23 +27,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.event_init()
 
-        self.from_x = self.from_y = self.to_x = self.to_y = None
+        self.from_x = self.from_y = self.to_x = self.to_y = self.from_pos = self.to_pos = None
         self.object_list = []
 
     def event_init(self):
         # for i, action in enumerate(self.action_list):
         #     action.toggled.connect(lambda : self.triggerEvent(i))
 
-        self.actionCharactor.triggered.connect(lambda : self.triggerEvent(CHAR_SELECTED))
-        self.actionPicture.triggered.connect(lambda : self.triggerEvent(PICTURE_SELECTED))
-        self.actionDrawLine.triggered.connect(lambda : self.triggerEvent(DRAW_LINE))
-        self.actionDrawElipse.triggered.connect(lambda : self.triggerEvent(DRAW_ELIPSE))
-        self.actionDrawRect.triggered.connect(lambda : self.triggerEvent(DRAW_RECT))
-        self.actionRed.triggered.connect(lambda : self.triggerEvent(RED_SELECTED))
-        self.actionBlue.triggered.connect(lambda : self.triggerEvent(BLUE_SELECTED))
-        self.actionYellow.triggered.connect(lambda : self.triggerEvent(YELLOW_SELECTED))
-        self.actionGreen.triggered.connect(lambda : self.triggerEvent(GREEN_SELECTED))
-        self.actionPurple.triggered.connect(lambda : self.triggerEvent(PURPLE_SELECTED))
+        self.actionCharactor.triggered.connect(lambda: self.triggerEvent(CHAR_SELECTED))
+        self.actionPicture.triggered.connect(lambda: self.triggerEvent(PICTURE_SELECTED))
+        self.actionDrawLine.triggered.connect(lambda: self.triggerEvent(DRAW_LINE))
+        self.actionDrawElipse.triggered.connect(lambda: self.triggerEvent(DRAW_ELIPSE))
+        self.actionDrawRect.triggered.connect(lambda: self.triggerEvent(DRAW_RECT))
+        self.actionRed.triggered.connect(lambda: self.triggerEvent(RED_SELECTED))
+        self.actionBlue.triggered.connect(lambda: self.triggerEvent(BLUE_SELECTED))
+        self.actionYellow.triggered.connect(lambda: self.triggerEvent(YELLOW_SELECTED))
+        self.actionGreen.triggered.connect(lambda: self.triggerEvent(GREEN_SELECTED))
+        self.actionPurple.triggered.connect(lambda: self.triggerEvent(PURPLE_SELECTED))
 
     def triggerEvent(self, event):
         # TODO: 이벤트 구분은 정상, But UI 상에 Check가 이상하게 찍힘, Status도 이상한 것을 보아 구현 자체를 엎어야 할듯
@@ -78,24 +78,37 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def mousePressEvent(self, event):
         self.from_x = event.x()
         self.from_y = event.y()
+        self.from_pos = event.pos()
 
         self.createNewWindow(self.from_x, self.from_y)  # 필요시 새 윈도우 생성
 
-        if self.color == RED_SELECTED: color = RED
-        elif self.color == BLUE_SELECTED: color = BLUE
-        elif self.color == YELLOW_SELECTED: color = YELLOW
-        elif self.color == GREEN_SELECTED: color = GREEN
-        elif self.color == PURPLE_SELECTED: color = PURPLE
-        else: color = (0, 0, 0)
-
         # (모드, 위치, 텍스트, 색상)
-        self.object_list.append((self.mode, event.pos(), self.user_input, color))
-        self.user_input = None
+        if self.mode == CHAR_SELECTED:
+            self.object_list.append((self.mode, event.pos(), self.user_input, self.extractRGB()))
+            self.user_input = None
+        elif self.mode == PICTURE_SELECTED:
+            self.object_list.append((self.mode, event.pos(), self.user_input, self.extractRGB()))
+            self.user_input = None
 
+    def extractRGB(self):
+        if self.color == RED_SELECTED:
+            color = RED
+        elif self.color == BLUE_SELECTED:
+            color = BLUE
+        elif self.color == YELLOW_SELECTED:
+            color = YELLOW
+        elif self.color == GREEN_SELECTED:
+            color = GREEN
+        elif self.color == PURPLE_SELECTED:
+            color = PURPLE
+        else:
+            color = (0, 0, 0)
+        return color
 
     def mouseReleaseEvent(self, event):
-        self.to_x = event.x
-        self.to_y = event.y
+        self.to_x = event.x()
+        self.to_y = event.y()
+        self.to_pos = event.pos()
 
         # TODO 처리
         # if self.mode == DRAW_LINE:

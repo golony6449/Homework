@@ -2,12 +2,12 @@ from ui.main_window import Ui_MainWindow
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtGui import QPainter, QColor, QFont, QPen
 from PyQt5.QtCore import Qt, QRect
-from time import sleep
 
 from ui_logic.login_window_logic import LoginWindow
 from ui_logic.file_select_window_logic import FileSelectWindow
 from ui_logic.char_input_window_logic import CharInputWindow
 from module.const_value import *
+
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -120,6 +120,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # (유형, 시점, 종점, 색상)
             self.object_list.append((self.mode, self.from_pos, event.pos(), self.extractRGB()))
 
+        elif self.mode == DRAW_RECT:
+            # (유형, 시점, 종점, 색상)
+            self.object_list.append((self.mode, self.from_pos, event.pos(), self.extractRGB()))
+
         # elif self.mode == DRAW_RECT:
         #     self.object_list.append()
 
@@ -139,18 +143,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 painter.setPen(QColor(obj[3][0], obj[3][1], obj[3][2]))
                 painter.setFont(QFont('Decorative', 15))
                 painter.drawText(obj[1], obj[2])
-            if obj[0] == DRAW_LINE:
+            elif obj[0] == DRAW_LINE:
                 pen.setColor(QColor(obj[3][0], obj[3][1], obj[3][2]))
                 painter.setPen(pen)
                 painter.drawLine(obj[1], obj[2])
-            if obj[0] == DRAW_ELIPSE:
+            elif obj[0] == DRAW_ELIPSE:
                 pen.setColor(QColor(obj[3][0], obj[3][1], obj[3][2]))
                 painter.setPen(pen)
                 painter.drawEllipse(QRect(obj[1], obj[2]))
+            elif obj[0] == DRAW_RECT:
+                pen.setColor(QColor(obj[3][0], obj[3][1], obj[3][2]))
+                painter.setPen(pen)
+                painter.drawRect(QRect(obj[1], obj[2]))
 
         painter.end()
-
-
 
     def login(self):
         # https://www.reddit.com/r/learnpython/comments/7w9pt9/pyqt5_passing_variable_from_one_window_to_another/

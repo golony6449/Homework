@@ -1,7 +1,7 @@
 from ui.main_window import Ui_MainWindow
-from PyQt5.QtWidgets import QMainWindow
-from PyQt5.QtGui import QPainter, QColor, QFont, QPen
-from PyQt5.QtCore import Qt, QRect
+from PyQt5.QtWidgets import QMainWindow, QLabel
+from PyQt5.QtGui import QPainter, QColor, QFont, QPen, QPixmap, QImage
+from PyQt5.QtCore import Qt, QRect, QPoint
 
 from ui_logic.login_window_logic import LoginWindow
 from ui_logic.file_select_window_logic import FileSelectWindow
@@ -109,23 +109,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.to_x = event.x()
         self.to_y = event.y()
         self.to_pos = event.pos()
+        
+        is_Right = self.mouseButtonKind(event.button())
 
         # TODO 처리
-        if self.mode == DRAW_LINE:
+        if self.mode == DRAW_LINE and not is_Right:
             # (유형, 시점, 종점, 색상)
             self.object_list.append((self.mode, self.from_pos, event.pos(), self.extractRGB()))
             print("라인 추가", self.mode, self.from_pos, event.pos(), self.extractRGB())
 
-        elif self.mode == DRAW_ELIPSE:
+        elif self.mode == DRAW_ELIPSE and not is_Right:
             # (유형, 시점, 종점, 색상)
             self.object_list.append((self.mode, self.from_pos, event.pos(), self.extractRGB()))
 
-        elif self.mode == DRAW_RECT:
+        elif self.mode == DRAW_RECT and not is_Right:
             # (유형, 시점, 종점, 색상)
             self.object_list.append((self.mode, self.from_pos, event.pos(), self.extractRGB()))
 
-        # elif self.mode == DRAW_RECT:
-        #     self.object_list.append()
+        if is_Right:
+            # TODO 삭제
+            pass
 
         self.from_x = self.from_y = self.to_x = self.to_y = None
         self.update()
@@ -143,6 +146,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 painter.setPen(QColor(obj[3][0], obj[3][1], obj[3][2]))
                 painter.setFont(QFont('Decorative', 15))
                 painter.drawText(obj[1], obj[2])
+            elif obj[0] == PICTURE_SELECTED:
+                # label = QLabel(self.centralwidget)
+                # print(obj[2])
+                # pixmap = QPixmap('images.jpg')
+                # label.setGeometry(QRect(obj[1], pixmap.size()))
+                # # label.setPixmap(pixmap)
+                # label.setText("test")
+
+                img = QImage(obj[2])
+                painter.drawImage(obj[1], img)
+                pass
+
             elif obj[0] == DRAW_LINE:
                 pen.setColor(QColor(obj[3][0], obj[3][1], obj[3][2]))
                 painter.setPen(pen)
@@ -157,6 +172,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 painter.drawRect(QRect(obj[1], obj[2]))
 
         painter.end()
+
+    def mouseButtonKind(self, buttons):
+        # Reference: https://freeprog.tistory.com/330
+        print(buttons)
+        if buttons == Qt.LeftButton:
+            print('LEFT')
+            return False
+        if buttons == Qt.MidButton:
+            print('MIDDLE')
+        if buttons == Qt.RightButton:
+            print('RIGHT')
+            return True
 
     def login(self):
         # https://www.reddit.com/r/learnpython/comments/7w9pt9/pyqt5_passing_variable_from_one_window_to_another/

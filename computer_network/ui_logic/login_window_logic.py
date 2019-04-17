@@ -7,6 +7,23 @@ class LoginWindow(QDialog, Ui_Dialog):
         super().__init__()
         super().setupUi(self)
 
+        self.Server.toggled.connect(lambda: self.mode_select(True))
+        self.Client.toggled.connect(lambda: self.mode_select(False))
+        self.is_server = False
+
+    def mode_select(self, is_server):
+        if is_server is True:
+            self.host_edit.setText('127.0.0.1')
+            self.host_edit.setEnabled(False)
+            # self.username_edit.setEnabled(False)
+            self.is_server = True
+
+        else:
+            self.host_edit.setText('')
+            self.host_edit.setEnabled(True)
+            # self.username_edit.setEnabled(True)
+            self.is_server = False
+
     def accept(self):
         login_flag = True   # GUI 개발용 값
 
@@ -16,5 +33,3 @@ class LoginWindow(QDialog, Ui_Dialog):
             super().accept()
         else:
             return
-
-# TODO main window GUI 종료 후에도 프로세스가 끝나지 않음

@@ -31,6 +31,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.from_x = self.from_y = self.to_x = self.to_y = self.from_pos = self.to_pos = None
         self.object_list = []
+        self.registered_user_list = ['kang', 'kim', 'lee' 'park', 'song']
+        self.current_user_list = list()
 
     def event_init(self):
         # for i, action in enumerate(self.action_list):
@@ -92,7 +94,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.object_list.append((self.mode, event.pos(), self.user_input, self.extractRGB()))
             self.user_input = None
         elif self.mode == PICTURE_SELECTED and not is_Right:
-            self.object_list.append((self.mode, event.pos(), self.user_input, self.extractRGB(), QImage(self.user_input)))
+            self.object_list.append((self.mode, event.pos(), self.user_input, QImage(self.user_input)))
             self.user_input = None
 
         if is_Right:
@@ -200,7 +202,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         is_Right = self.mouseButtonKind(event.button())
 
-        # TODO 처리
         if self.mode == DRAW_LINE and not is_Right:
             # (유형, 시점, 종점, 색상)
             self.object_list.append((self.mode, self.from_pos, event.pos(), self.extractRGB()))
@@ -269,10 +270,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             print('RIGHT')
             return True
 
-    def login(self):
+    def try_login(self):
         # https://www.reddit.com/r/learnpython/comments/7w9pt9/pyqt5_passing_variable_from_one_window_to_another/
         login = LoginWindow()
 
         if login.exec_():
+            self.username = login.username_edit.toPlainText()
+            self.host = login.host_edit.toPlainText()
+            self.is_server = login.is_server
             return False
         return True

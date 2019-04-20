@@ -15,3 +15,7 @@ BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 GREEN = (0, 255, 0)
 PURPLE = (102, 0, 204)
+
+PORT = 10000
+BUFFER_SIZE = 4096
+USER_LIST = ['kang', 'kim', 'lee' 'park', 'song']

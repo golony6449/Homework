@@ -7,6 +7,7 @@ from ui_logic.login_window_logic import LoginWindow
 from ui_logic.file_select_window_logic import FileSelectWindow
 from ui_logic.char_input_window_logic import CharInputWindow
 from module.const_value import *
+from module.socket import *
 
 from copy import copy
 
@@ -31,8 +32,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.from_x = self.from_y = self.to_x = self.to_y = self.from_pos = self.to_pos = None
         self.object_list = []
-        self.registered_user_list = ['kang', 'kim', 'lee' 'park', 'song']
         self.current_user_list = list()
+
+        # 통신
+        self.serverThread = None
+        self.clientThread = None
 
     def event_init(self):
         # for i, action in enumerate(self.action_list):
@@ -48,6 +52,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionYellow.triggered.connect(lambda: self.triggerEvent(YELLOW_SELECTED))
         self.actionGreen.triggered.connect(lambda: self.triggerEvent(GREEN_SELECTED))
         self.actionPurple.triggered.connect(lambda: self.triggerEvent(PURPLE_SELECTED))
+
+    def socket_init(self):
+        pass
 
     def triggerEvent(self, event):
         # TODO: 이벤트 구분은 정상, But UI 상에 Check가 이상하게 찍힘, Status도 이상한 것을 보아 구현 자체를 엎어야 할듯
@@ -272,7 +279,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def try_login(self):
         # https://www.reddit.com/r/learnpython/comments/7w9pt9/pyqt5_passing_variable_from_one_window_to_another/
-        login = LoginWindow()
+        login = LoginWindow(caller=self)
 
         if login.exec_():
             self.username = login.username_edit.toPlainText()

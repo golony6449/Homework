@@ -1,6 +1,6 @@
 import socket
 from threading import Thread
-from socketserver import ThreadingMixIn
+import module.const_value as values
 
 
 class ServerThread(Thread):
@@ -10,19 +10,19 @@ class ServerThread(Thread):
 
     def run(self):
         TCP_IP = '0.0.0.0'
-        TCP_PORT = 80
-        BUFFER_SIZE = 20
+        TCP_PORT = values.PORT
+        BUFFER_SIZE = values.BUFFER_SIZE
         tcpServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         tcpServer.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         tcpServer.bind((TCP_IP, TCP_PORT))
         threads = []
 
-        tcpServer.listen(4)
+        tcpServer.listen(10)
         while True:
             print("Multithreaded Python server : Waiting for connections from TCP clients...")
             global conn
             (conn, (ip, port)) = tcpServer.accept()
-            newthread = ClientThread(ip, port, window)
+            newthread = ClientThread(ip, self.window, is_server=True)
             newthread.start()
             threads.append(newthread)
 
@@ -32,17 +32,26 @@ class ServerThread(Thread):
 
 class ClientThread(Thread):
 
-    def __init__(self, ip, port, window):
+    def __init__(self, ip, window, is_server=False):
         Thread.__init__(self)
         self.window = window
         self.ip = ip
-        self.port = port
-        print("[+] New server socket thread started for " + ip + ":" + str(port))
+        self.port = values.PORT
+        self.is_server = is_server
+        print("[+] New server socket thread started for " + ip + ":" + str(self.port))
 
     def run(self):
+        global conn
+
+        if self.is_server is True:
+            pass
+        else:
+            conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            conn.connect((self.ip, self.port))
+
         while True:
             # (conn, (self.ip,self.port)) = serverThread.tcpServer.accept()
-            global conn
-            data = conn.recv(2048)
-            window.chat.append(data.decode("utf-8"))
+
+            data = conn.recv(values.BUFFER_SIZE)
+            self.window.chat.append(data.decode("utf-8"))
             print(data)

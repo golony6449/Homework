@@ -3,6 +3,8 @@ from ui.login_window import Ui_Dialog
 from PyQt5.QtWidgets import QDialog, QErrorMessage
 
 from module.socket import *
+import module.const_value as values
+from time import sleep
 
 
 class LoginWindow(QDialog, Ui_Dialog):
@@ -34,6 +36,9 @@ class LoginWindow(QDialog, Ui_Dialog):
 
         # TODO 로그인 작업
         login_flag = self.connection_establish()
+        sleep(1)
+        if not self.is_server:
+            login_flag = self.login()
 
         if login_flag is True:
             super().accept()
@@ -63,4 +68,5 @@ class LoginWindow(QDialog, Ui_Dialog):
 
     def login(self):
         # TODO: 유저 이름 확인, 매칭 실패시 접속 해제
-        pass
+        flag = self.caller.clientThread.login(self.username_edit.toPlainText())
+        return flag

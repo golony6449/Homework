@@ -17,14 +17,15 @@ class ServerThread(Thread):
         tcpServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         tcpServer.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         tcpServer.bind((TCP_IP, TCP_PORT))
+        global threads
         threads = []
 
         tcpServer.listen(10)
         while True:
             print("Multithreaded Python server : Waiting for connections from TCP clients...")
-            global conn
+            # global conn
             (conn, (ip, port)) = tcpServer.accept()
-            newthread = ServerChildThread(ip, self.window)
+            newthread = ServerChildThread(ip, self.window, conn)
             newthread.start()
             threads.append(newthread)
 
@@ -38,7 +39,7 @@ class ServerThread(Thread):
 
 # TODO: 서버측 소켓 분리
 class ServerChildThread(Thread):
-    def __init__(self, ip, window):
+    def __init__(self, ip, window, conn):
         Thread.__init__(self)
         self.window = window
         self.ip = ip
@@ -46,13 +47,14 @@ class ServerChildThread(Thread):
         self.is_server = True
         self.broadcast_flag = True
         self.broadcast_data = None
+        self.conn = conn
         print("[+] New server socket thread started for " + ip + ":" + str(self.port))
 
     def run(self):
         # 데이터 수신시 처리할 일
         while True:
             # TODO: 리팩토링 필요, 각각의 메서드에서 FLAG만 수정하고 실제 처리는 run에서 하도록 해야 할듯
-            data = conn.recv(values.BUFFER_SIZE)
+            data = self.conn.recv(values.BUFFER_SIZE)
             data = data.decode('utf-8')
             self.res = data
 
@@ -64,7 +66,7 @@ class ServerChildThread(Thread):
         req = str(values.METHOD_LOGIN_REQUEST) + " " + username
 
         # "METHOD USERNAME"
-        conn.send(req.encode('utf-8'))
+        self.conn.send(req.encode('utf-8'))
         sleep(1)
         res = self.res  # 수신은 run의 무한루프에서 진행
         res = res.split()
@@ -90,7 +92,7 @@ class ServerChildThread(Thread):
                 res = str(values.METHOD_LOGIN_RESPONSE) + " " + str(values.ERROR)
 
             print("send data: ", res)
-            conn.send(res.encode('utf-8'))
+            self.conn.send(res.encode('utf-8'))
 
         if method == values.METHOD_SEND_OBJ_REQUEST:
             self.broadcast_flag = True

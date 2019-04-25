@@ -35,8 +35,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.current_user_list = list()
 
         # 통신
+        self.is_server = None
+        self.Thread = None
         self.serverThread = None
-        self.clientThread = None
 
     def event_init(self):
         # for i, action in enumerate(self.action_list):
@@ -52,9 +53,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionYellow.triggered.connect(lambda: self.triggerEvent(YELLOW_SELECTED))
         self.actionGreen.triggered.connect(lambda: self.triggerEvent(GREEN_SELECTED))
         self.actionPurple.triggered.connect(lambda: self.triggerEvent(PURPLE_SELECTED))
-
-    def socket_init(self):
-        pass
 
     def triggerEvent(self, event):
         # TODO: 이벤트 구분은 정상, But UI 상에 Check가 이상하게 찍힘, Status도 이상한 것을 보아 구현 자체를 엎어야 할듯
@@ -224,6 +222,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.object_list.append((self.mode, self.from_pos, event.pos(), self.extractRGB()))
 
         self.from_x = self.from_y = self.to_x = self.to_y = None
+
+        # obj_list 공유
+        # TODO 구현 예정
+        self.Thread.broadcast_obj_list(self.object_list)
+
         self.update()
 
     def paintEvent(self, event):

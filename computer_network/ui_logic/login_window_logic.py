@@ -37,8 +37,10 @@ class LoginWindow(QDialog, Ui_Dialog):
         # TODO 로그인 작업
         login_flag = self.connection_establish()
         sleep(1)
-        if not self.is_server:
-            login_flag = self.login()
+        # if not self.is_server:
+        #     login_flag = self.login()
+
+        login_flag = self.login()
 
         if login_flag is True:
             super().accept()
@@ -47,15 +49,20 @@ class LoginWindow(QDialog, Ui_Dialog):
 
     def connection_establish(self):
         if self.is_server is True:
+            host = self.host_edit.toPlainText()
             self.caller.serverThread = ServerThread(window=self.caller)
+            self.caller.Thread = ClientThread(host, window=self.caller)
+            self.caller.is_server = True
             self.caller.serverThread.start()
+            self.caller.Thread.start()
             return True
 
         else:
             try:
                 host = self.host_edit.toPlainText()
-                self.caller.clientThread = ClientThread(host, self.caller)
-                self.caller.clientThread.start()
+                self.caller.Thread = ClientThread(host, self.caller)
+                self.caller.is_server = False
+                self.caller.Thread.start()
                 return True
 
             except ConnectionRefusedError:
@@ -68,5 +75,5 @@ class LoginWindow(QDialog, Ui_Dialog):
 
     def login(self):
         # TODO: 유저 이름 확인, 매칭 실패시 접속 해제
-        flag = self.caller.clientThread.login(self.username_edit.toPlainText())
+        flag = self.caller.Thread.login(self.username_edit.toPlainText())
         return flag

@@ -70,7 +70,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 action.setChecked(True)
         print()
 
-    def createNewWindow(self, x, y):
+    def createNewWindow(self):
         if self.mode == PICTURE_SELECTED:
             new_window = FileSelectWindow()
         elif self.mode == CHAR_SELECTED:
@@ -92,7 +92,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         is_Right = self.mouseButtonKind(event.button())
 
         if not is_Right:
-            self.createNewWindow(self.from_x, self.from_y)  # 필요시 새 윈도우 생성
+            self.createNewWindow()  # 필요시 새 윈도우 생성
 
         # (모드, 위치, 텍스트, 색상)
         if self.mode == CHAR_SELECTED and not is_Right:

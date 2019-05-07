@@ -47,6 +47,10 @@ class LoginWindow(QDialog, Ui_Dialog):
         else:
             return
 
+    def reject(self):
+        super().reject()
+        exit(0)
+
     def connection_establish(self):
         if self.is_server is True:
             host = self.host_edit.toPlainText()
@@ -66,6 +70,7 @@ class LoginWindow(QDialog, Ui_Dialog):
                 return True
 
             except ConnectionRefusedError:
+                # TODO: 팝업 말고, 라벨에 결과 출력해도 될거 같음
                 print('대상 컴퓨터에서 연결을 거부했으므로 연결하지 못했습니다')
                 return False
 

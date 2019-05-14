@@ -85,6 +85,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.user_input = new_window.inputText.toPlainText()
 
     def mousePressEvent(self, event):
+        delete_trigger = False
         self.from_x = event.x()
         self.from_y = event.y()
         self.from_pos = event.pos()
@@ -111,6 +112,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     if x - 5 < event.x() < x + (13 * len(obj[2])):
                         if y - 25 < event.y() < y + 5:
                             self.object_list.remove(obj)
+                            delete_trigger = True
                             break
 
                 elif obj[0] == PICTURE_SELECTED:
@@ -119,6 +121,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     if x - 5 < event.x() < x + obj[4].size().width() + 5:
                         if y - 5 < event.y() < y + obj[4].size().height() + 5:
                             self.object_list.remove(obj)
+                            delete_trigger = True
                             break
 
                 elif obj[0] == DRAW_LINE:
@@ -144,6 +147,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     if left_x - 5 < event.x() < right_x + 5:
                         if func(event.x()) - 10 < event.y() < func(event.x()) + 10:
                             self.object_list.remove(obj)
+                            delete_trigger = True
                             break
 
                 elif obj[0] == DRAW_ELIPSE:
@@ -166,6 +170,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     if left_x < event.x() < right_x:
                         if left_y < event.y() < right_y or right_y < event.y() < left_y:
                             self.object_list.remove(obj)
+                            delete_trigger = True
                             break
 
                 elif obj[0] == DRAW_RECT:
@@ -178,12 +183,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     if from_x - 10 < event.x() < from_x + 10 or to_x - 10 < event.x() < to_x + 10:
                         if from_y - 10 < event.y() < to_y + 10:
                             self.object_list.remove(obj)
+                            delete_trigger = True
                             break
 
                     if from_y - 10 < event.y() < from_y + 10 or to_y - 10 < event.y() < to_y + 10:
                         if from_x - 10 < event.x() < to_x + 10:
                             self.object_list.remove(obj)
+                            delete_trigger = True
                             break
+
+        if self.mode == CHAR_SELECTED or self.mode == PICTURE_SELECTED or delete_trigger is True:
+            self.Thread.broadcast_obj_list(self.object_list)
 
     def extractRGB(self):
         if self.color == RED_SELECTED:
@@ -224,8 +234,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.from_x = self.from_y = self.to_x = self.to_y = None
 
         # obj_list 공유
-        # TODO 구현 예정
-        self.Thread.broadcast_obj_list(self.object_list)
+        if self.mode == DRAW_LINE or self.mode == DRAW_ELIPSE or self.mode == DRAW_RECT:
+            self.Thread.broadcast_obj_list(self.object_list)
 
         self.update()
 

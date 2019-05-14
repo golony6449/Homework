@@ -61,24 +61,24 @@ class ServerChildThread(Thread):
                     break
             # data = self.conn.recv(values.BUFFER_SIZE)
 
-            data = data.decode('utf-8')
-            self.res = data
+            print('Server Received Data: ', data)
 
-            self.server_process(data)
+            # data = data.decode('utf-8')
+            self.res = splited_data = [data[:4].decode('utf-8'), data[5:]]
 
-            print('Received Data: ', data)
+            self.server_process(splited_data)
 
-    def server_process(self, decoded_data):
-        processed = decoded_data.split()
-        method = int(processed[0])
-
+    def server_process(self, splited_data):
+        method = splited_data[0]
+        print('data: ', splited_data)
         if method == values.METHOD_LOGIN_REQUEST:
-            if processed[1] in values.USER_LIST:
+            encoded_name = splited_data[1].decode('utf-8')
+            if encoded_name in values.USER_LIST:
                 res = str(values.METHOD_LOGIN_RESPONSE) + " " + str(values.SUCCESS)
             else:
                 res = str(values.METHOD_LOGIN_RESPONSE) + " " + str(values.ERROR)
 
-            print("send data: ", res)   # 테스트 코드
+            print("send to Client: ", res)   # 테스트 코드
             self.conn.send(res.encode('utf-8'))
 
         elif method == values.METHOD_SEND_OBJ_REQUEST:
@@ -86,11 +86,11 @@ class ServerChildThread(Thread):
             # self.broadcast_flag = True
             # self.broadcast_data = pickle.loads(processed[1])
 
-            res = str(values.METHOD_SEND_OBJ_RESPONSE) + " " + str(processed[1])
+            res = (values.METHOD_SEND_OBJ_RESPONSE + " ").encode('utf-8') + splited_data[1]
 
             global threads
             for thread in threads:
-                thread.conn.sendall(res.encode('utf-8'))
+                thread.conn.sendall(res)
 
         else:
             raise ValueError("잘못된 method code", method)
@@ -104,7 +104,7 @@ class ClientThread(Thread):
         self.port = values.PORT
         self.res = None
         self.conn = None
-        print("[+] New server socket thread started for " + ip + ":" + str(self.port))
+        print("[+] New client socket thread started for " + ip + ":" + str(self.port))
 
     def run(self):
         self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -123,35 +123,49 @@ class ClientThread(Thread):
                     break
 
             # data = self.connection.recv(values.BUFFER_SIZE)
-            data = data.decode('utf-8')
+            plain_data = data
+            # data = data.decode('utf-8')
             self.res = data
 
-            self.client_process(data)
+            self.client_process(data, plain_data)
 
-            print('Received Data: ', data)
+    def client_process(self, decoded_data, plain_data):
+        # processed = decoded_data.split()
+        # method = int(processed[0])
+        method = plain_data[:4].decode('utf-8')
+        print('Client Received plain_data: ', plain_data)
+        print('method: ', method, 'type: ', type(method))
 
-    def client_process(self, decoded_data):
-        processed = decoded_data.split()
-        method = int(processed[0])
-
+        if method == values.METHOD_LOGIN_RESPONSE:
+            pass
         if method == values.METHOD_SEND_OBJ_RESPONSE:
-            obj_list = bytes(processed[1], 'utf-8') # TODO: 수정필요
-            obj_list = pickle.loads(obj_list)
+            # print('Received: ', processed[1])
+            # print('To_bytes: ', bytes(processed[1], 'utf-8'))
+            # print('Encode__: ', processed[1][2:-1].encode('utf-8'))
+
+            # obj_list = bytes(processed[1], 'utf-8') # TODO: 수정필요
+            # obj_list = pickle.loads(processed[1][2:-1].encode('utf-8'))
+            print(plain_data[5:-1])
+            obj_list = pickle.loads(plain_data[5:-1])
+            print('pre_obj: \t', obj_list)
+            print('post_obj: \t', self.window.object_list)
             self.window.object_list = obj_list
+        else:
+            print('CLIENT_ERROR: Invalid Method')
 
     def login(self, username):
-        req = str(values.METHOD_LOGIN_REQUEST) + " " + username
+        req = values.METHOD_LOGIN_REQUEST + " " + username
 
         # "METHOD USERNAME"
         self.conn.send(req.encode('utf-8'))
         sleep(1)
         res = self.res      # 수신은 run의 무한루프에서 진행
-        res = res.split()
+        res = [res[:4].decode('utf-8'), res[5:].decode('utf-8')]
 
-        if int(res[0]) == values.METHOD_LOGIN_RESPONSE and int(res[1]) == values.SUCCESS:
+        if res[0] == values.METHOD_LOGIN_RESPONSE and int(res[1]) == values.SUCCESS:
             print('login successfully')
             return True
-        elif int(res[0]) == values.METHOD_LOGIN_RESPONSE and int(res[1]) == values.ERROR:
+        elif res[0] == values.METHOD_LOGIN_RESPONSE and int(res[1]) == values.ERROR:
             print('login fail')
             return False
         else:
@@ -160,10 +174,9 @@ class ClientThread(Thread):
 
     def broadcast_obj_list(self, obj_list):
         data_string = pickle.dumps(obj_list)
-        res = str(values.METHOD_SEND_OBJ_REQUEST) + " " + str(data_string) + " " \
-        + str(values.METHOD_SEND_OBJ_REQUEST)
+        res = (values.METHOD_SEND_OBJ_REQUEST + " ").encode('utf-8') + data_string
 
-        self.conn.sendall(res.encode('utf-8'))
+        self.conn.sendall(res)
         sleep(1)
         print('OBJ SEND Successfully')
 

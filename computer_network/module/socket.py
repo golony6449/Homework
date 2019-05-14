@@ -70,13 +70,13 @@ class ServerChildThread(Thread):
 
     def server_process(self, splited_data):
         method = splited_data[0]
-        print('data: ', splited_data)
+        print('Server splited data: ', splited_data)
         if method == values.METHOD_LOGIN_REQUEST:
             encoded_name = splited_data[1].decode('utf-8')
             if encoded_name in values.USER_LIST:
-                res = str(values.METHOD_LOGIN_RESPONSE) + " " + str(values.SUCCESS)
+                res = values.METHOD_LOGIN_RESPONSE + " " + str(values.SUCCESS)
             else:
-                res = str(values.METHOD_LOGIN_RESPONSE) + " " + str(values.ERROR)
+                res = values.METHOD_LOGIN_RESPONSE + " " + str(values.ERROR)
 
             print("send to Client: ", res)   # 테스트 코드
             self.conn.send(res.encode('utf-8'))
@@ -127,9 +127,9 @@ class ClientThread(Thread):
             # data = data.decode('utf-8')
             self.res = data
 
-            self.client_process(data, plain_data)
+            self.client_process(plain_data)
 
-    def client_process(self, decoded_data, plain_data):
+    def client_process(self, plain_data):
         # processed = decoded_data.split()
         # method = int(processed[0])
         method = plain_data[:4].decode('utf-8')
@@ -138,18 +138,19 @@ class ClientThread(Thread):
 
         if method == values.METHOD_LOGIN_RESPONSE:
             pass
-        if method == values.METHOD_SEND_OBJ_RESPONSE:
+        elif method == values.METHOD_SEND_OBJ_RESPONSE:
             # print('Received: ', processed[1])
             # print('To_bytes: ', bytes(processed[1], 'utf-8'))
             # print('Encode__: ', processed[1][2:-1].encode('utf-8'))
 
             # obj_list = bytes(processed[1], 'utf-8') # TODO: 수정필요
             # obj_list = pickle.loads(processed[1][2:-1].encode('utf-8'))
-            print(plain_data[5:-1])
-            obj_list = pickle.loads(plain_data[5:-1])
+            print('to_unpickle', plain_data[5:])
+            obj_list = pickle.loads(plain_data[5:])
             print('pre_obj: \t', obj_list)
             print('post_obj: \t', self.window.object_list)
             self.window.object_list = obj_list
+            self.window.update()
         else:
             print('CLIENT_ERROR: Invalid Method')
 
@@ -169,7 +170,7 @@ class ClientThread(Thread):
             print('login fail')
             return False
         else:
-            print("ERROR: WRONG MESSAGE", res)
+            print("ERROR: WRONG LOGIN METHOD", res)
             return False
 
     def broadcast_obj_list(self, obj_list):

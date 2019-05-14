@@ -18,7 +18,7 @@ PURPLE = (102, 0, 204)
 
 PORT = 10000
 BUFFER_SIZE = 4096
-USER_LIST = ['kang', 'kim', 'lee' 'park', 'song']
+USER_LIST = ['kang', 'kim', 'lee', 'park', 'song']
 
 METHOD_BEGIN = 1000
 METHOD_LOGIN_REQUEST = 1001     # 포함정보: 유저명

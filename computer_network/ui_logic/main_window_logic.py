@@ -288,5 +288,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.username = login.username_edit.toPlainText()
             self.host = login.host_edit.toPlainText()
             self.is_server = login.is_server
+
+            if self.is_server is True:
+                self.setWindowTitle('Homework - Server Mode')
+            else:
+                self.setWindowTitle('Homework - Client Mode')
+
             return False
         return True

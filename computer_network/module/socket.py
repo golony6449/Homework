@@ -19,13 +19,14 @@ class ServerThread(Thread):
         tcpServer.bind((TCP_IP, TCP_PORT))
         global threads
         threads = []
+        connected_user_list = list()
 
         tcpServer.listen(10)
         while True:
             print("Multithreaded Python server : Waiting for connections from TCP clients...")
             # global conn
             (conn, (ip, port)) = tcpServer.accept()
-            newthread = ServerChildThread(ip, self.window, conn)
+            newthread = ServerChildThread(ip, self.window, conn, connected_user_list)
             newthread.start()
             threads.append(newthread)
 
@@ -39,13 +40,14 @@ class ServerThread(Thread):
 
 # TODO: 서버측 소켓 분리
 class ServerChildThread(Thread):
-    def __init__(self, ip, window, conn):
+    def __init__(self, ip, window, conn, user_list):
         Thread.__init__(self)
         self.window = window
         self.ip = ip
         self.port = values.PORT
         self.is_server = True   # TODO: 제거 예정
         self.conn = conn
+        self.connected_user_list = user_list
         print("[+] New server socket thread started for " + ip + ":" + str(self.port))
 
     def run(self):
@@ -69,17 +71,29 @@ class ServerChildThread(Thread):
             self.server_process(splited_data)
 
     def server_process(self, splited_data):
+        global threads
         method = splited_data[0]
         print('Server splited data: ', splited_data)
         if method == values.METHOD_LOGIN_REQUEST:
-            encoded_name = splited_data[1].decode('utf-8')
-            if encoded_name in values.USER_LIST:
+            decoded_name = splited_data[1].decode('utf-8')
+            if decoded_name in values.USER_LIST:
                 res = values.METHOD_LOGIN_RESPONSE + " " + str(values.SUCCESS)
+                self.conn.send(res.encode('utf-8'))
+
+                sleep(1)
+
+                self.connected_user_list.append(decoded_name)
+                print('connected user: ', self.connected_user_list)
+                res = (values.METHOD_SEND_USER_RESPONSE + ' ').encode('utf-8') + pickle.dumps(self.connected_user_list)
+
+                for thread in threads:
+                    thread.conn.sendall(res)
             else:
                 res = values.METHOD_LOGIN_RESPONSE + " " + str(values.ERROR)
+                self.conn.send(res.encode('utf-8'))
 
             print("send to Client: ", res)   # 테스트 코드
-            self.conn.send(res.encode('utf-8'))
+            # self.conn.send(res.encode('utf-8'))
 
         elif method == values.METHOD_SEND_OBJ_REQUEST:
             # TODO: 도착한 OBJ LIST를 브로드캐스트
@@ -88,10 +102,13 @@ class ServerChildThread(Thread):
 
             res = (values.METHOD_SEND_OBJ_RESPONSE + " ").encode('utf-8') + splited_data[1]
 
-            global threads
             for thread in threads:
                 thread.conn.sendall(res)
+        elif method == values.METHOD_SEND_USER_REQUEST:
+            res = (values.METHOD_SEND_USER_RESPONSE + ' ').encode('utf-8') + splited_data[1]
 
+            for thread in threads:
+                thread.conn.sendall(res)
         else:
             raise ValueError("잘못된 method code", method)
 
@@ -138,6 +155,7 @@ class ClientThread(Thread):
 
         if method == values.METHOD_LOGIN_RESPONSE:
             pass
+
         elif method == values.METHOD_SEND_OBJ_RESPONSE:
             # print('Received: ', processed[1])
             # print('To_bytes: ', bytes(processed[1], 'utf-8'))
@@ -151,6 +169,12 @@ class ClientThread(Thread):
             print('post_obj: \t', self.window.object_list)
             self.window.object_list = obj_list
             self.window.update()
+
+        elif method == values.METHOD_SEND_USER_RESPONSE:
+            user_list = pickle.loads(plain_data[5:])
+            self.window.current_user_list = user_list
+            self.window.update()
+
         else:
             print('CLIENT_ERROR: Invalid Method')
 
@@ -165,6 +189,8 @@ class ClientThread(Thread):
 
         if res[0] == values.METHOD_LOGIN_RESPONSE and int(res[1]) == values.SUCCESS:
             print('login successfully')
+            # self.window.current_user_list.append(username)
+            # self.broadcast_user_list(self.window.current_user_list)
             return True
         elif res[0] == values.METHOD_LOGIN_RESPONSE and int(res[1]) == values.ERROR:
             print('login fail')
@@ -181,3 +207,10 @@ class ClientThread(Thread):
         sleep(1)
         print('OBJ SEND Successfully')
 
+    def broadcast_user_list(self, user_list):
+        data_string = pickle.dumps(user_list)
+        res = (values.METHOD_SEND_USER_REQUEST + ' ').encode('utf-8') + data_string
+
+        self.conn.sendall(res)
+        sleep(1)
+        print('USER LIST SEND Successfully')

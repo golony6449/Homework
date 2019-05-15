@@ -241,6 +241,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def paintEvent(self, event):
         # print("윈도우 다시 그리기! 수행")
+
+        # 상태바 출력
+        msg = str()
+        for user in self.current_user_list:
+            msg = msg + user + ' '
+        self.statusbar.showMessage(msg)
+
         painter = QPainter()
         pen = QPen(Qt.SolidLine)
         pen.setWidth(2)
